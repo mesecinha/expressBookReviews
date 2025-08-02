@@ -64,7 +64,8 @@ public_users.get('/isbn/:isbn', function (req, res) {
   const getBookByISBN = new Promise((resolve, reject) => {
     const isbn = req.params.isbn;
     if (books[isbn]) {
-      resolve(books[isbn]);
+      //resolve(books[isbn]);
+      resolve({ isbn, ...books[isbn] });
     } else {
       reject("Book not found");
     }
@@ -94,7 +95,13 @@ public_users.get('/author/:author', function (req, res) {
   // Using Promise to get books by author
   const getBooksByAuthor = new Promise((resolve, reject) => {
     const author = req.params.author;
-    const foundBooks = Object.values(books).filter(book => book.author.toLowerCase() === author.toLowerCase());
+    //const foundBooks = Object.values(books).filter(book => book.author.toLowerCase() === author.toLowerCase());
+    const foundBooks = [];
+    for (const isbn in books) {
+      if (books[isbn].author.toLowerCase() === author.toLowerCase()) {
+        foundBooks.push({ isbn, ...books[isbn] });
+      }
+    }
     if (foundBooks.length > 0) {
       resolve(foundBooks);
     } else {
