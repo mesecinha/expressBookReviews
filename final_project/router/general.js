@@ -26,8 +26,27 @@ public_users.post("/register", (req, res) => {
 });
 
 // Get the book list available in the shop
+// public_users.get('/', function (req, res) {
+//   return res.status(200).json({ books: books });
+// });
+
 public_users.get('/', function (req, res) {
-  return res.status(200).json({ books: books });
+  // Using Promise to get book list
+  const getBooks = new Promise((resolve, reject) => {
+    try {
+      resolve(books);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+  getBooks
+    .then((bookList) => {
+      return res.status(200).json({ books: bookList });
+    })
+    .catch((error) => {
+      return res.status(500).json({ error: "Failed to retrieve books" });
+    });
 });
 
 // Get book details based on ISBN
