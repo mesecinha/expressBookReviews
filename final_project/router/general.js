@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -80,25 +81,67 @@ public_users.get('/isbn/:isbn', function (req, res) {
 });
 
 // Get book details based on author
+// public_users.get('/author/:author', function (req, res) {
+//   const author = req.params.author;
+//   const foundBooks = Object.values(books).filter(book => book.author.toLowerCase() === author.toLowerCase());
+//   if (foundBooks.length > 0) {
+//     return res.status(200).json(foundBooks);
+//   } else {
+//     return res.status(404).send("No books found by this author");
+//   }
+// });
+
 public_users.get('/author/:author', function (req, res) {
-  const author = req.params.author;
-  const foundBooks = Object.values(books).filter(book => book.author.toLowerCase() === author.toLowerCase());
-  if (foundBooks.length > 0) {
-    return res.status(200).json(foundBooks);
-  } else {
-    return res.status(404).send("No books found by this author");
-  }
+  // Using Promise to get books by author
+  const getBooksByAuthor = new Promise((resolve, reject) => {
+    const author = req.params.author;
+    const foundBooks = Object.values(books).filter(book => book.author.toLowerCase() === author.toLowerCase());
+    if (foundBooks.length > 0) {
+      resolve(foundBooks);
+    } else {
+      reject("No books found by this author");
+    }
+  });
+
+  getBooksByAuthor
+    .then((foundBooks) => {
+      return res.status(200).json(foundBooks);
+    })
+    .catch((error) => {
+      return res.status(404).send(error);
+    });
 });
 
 // Get all books based on title
+// public_users.get('/title/:title', function (req, res) {
+//   const title = req.params.title;
+//   const foundBooks = Object.values(books).filter(book => book.title.toLowerCase() === title.toLowerCase());
+//   if (foundBooks.length > 0) {
+//     return res.status(200).json(foundBooks);
+//   } else {
+//     return res.status(404).send("No books found with this title");
+//   }
+// });
+
 public_users.get('/title/:title', function (req, res) {
-  const title = req.params.title;
-  const foundBooks = Object.values(books).filter(book => book.title.toLowerCase() === title.toLowerCase());
-  if (foundBooks.length > 0) {
-    return res.status(200).json(foundBooks);
-  } else {
-    return res.status(404).send("No books found with this title");
-  }
+  // Using Promise to get books by title
+  const getBooksByTitle = new Promise((resolve, reject) => {
+    const title = req.params.title;
+    const foundBooks = Object.values(books).filter(book => book.title.toLowerCase() === title.toLowerCase());
+    if (foundBooks.length > 0) {
+      resolve(foundBooks);
+    } else {
+      reject("No books found with this title");
+    }
+  });
+
+  getBooksByTitle
+    .then((foundBooks) => {
+      return res.status(200).json(foundBooks);
+    })
+    .catch((error) => {
+      return res.status(404).send(error);
+    });
 });
 
 //  Get book review
